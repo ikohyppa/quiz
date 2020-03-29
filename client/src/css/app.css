@@ -1,0 +1,78 @@
+.adminContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* align-content: flex-start; */
+  background-color: #cad6ec;
+}
+
+.adminSet {
+  display: block;
+  margin-left: 1em;
+  margin-right: 0em;
+  padding-top: 0.35em;
+  padding-bottom: 0.625em;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  border: 2px groove (internal value);
+}
+
+.aling-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.chart {
+  padding: 1%;
+  margin: 20%;
+  font-size: 10px;
+  width: 1000;
+  box-shadow: blueviolet;
+}
+
+.flex-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* align-content: flex-start; */
+  background-color: #cad6ec;
+}
+
+.info {
+  text-align: left;
+  padding-left: 5em;
+  padding-right: 5em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.loginBox {
+  width: 300px;
+  text-align: left;
+  padding-left: 5em;
+  padding-right: 5em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
+
+.questionContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+  background-color: #dad6ec;
+}
+
+.questionResults {
+  padding-left: 3em;
+}
+
+.quiz {
+  background-color: #cad6ec;
+  padding: 1%;
+  margin: 1%;
+  width: auto;
+}
