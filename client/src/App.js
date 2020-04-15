@@ -103,11 +103,10 @@ const QuizApp = () => {
             {/* ******************* USER VIEW ********************** */}
             {showQuizzes && (
               <div className='flex-container'>
-                <div className='quiz'>
-                  {/* if no quiz is selected quiz buttons and quizOrder button are rendered */}
-                  {selectedQuiz === null &&
-                    quizzes.map((quiz, index) => (
-                      /* Select quiz button */
+                {/* if no quiz is selected quiz buttons and quizOrder button are rendered */}
+                {selectedQuiz === null && (
+                  <div className='quiz'>
+                    {quizzes.map((quiz, index) => (
                       <QuizSelect
                         key={quiz.quiz_id}
                         {...quiz}
@@ -118,20 +117,16 @@ const QuizApp = () => {
                         setSubmitted={setSubmitted}
                       />
                     ))}
-                </div>
-                <div className='quiz'>
-                  {selectedQuiz === null && (
-                    /* Order quizzes button */
                     <QuizOrder
                       dispatch={dispatch}
                       quizOrder={quizOrder}
                       setQuizOrder={setQuizOrder}
                     />
-                  )}
-                </div>
-                <div className='quiz'>
-                  {/* if a quiz is selected, quiz title, 'Lähetä vastaukset.'-button and questions are rendered */}
-                  {selectedQuiz !== null && (
+                  </div>
+                )}
+                {/* if a quiz is selected, quiz is rendered */}
+                {selectedQuiz !== null && (
+                  <div className='quiz'>
                     <Quiz
                       quiz={quizzes[selectedQuiz]}
                       quizIndex={selectedQuiz}
@@ -139,26 +134,27 @@ const QuizApp = () => {
                       submitted={submitted}
                       setSubmitted={setSubmitted}
                     />
-                  )}
-                </div>
-                <div>
-                  {/* when quiz has been submitted the results graph is rendered */}
-                  {/* ./components/Graph.js, reults graph*/}
-                  {submitted && <Graph quiz={quizzes[selectedQuiz]}></Graph>}
-                </div>
+                  </div>
+                )}
+                {/* when quiz has been submitted the results graph is rendered */}
+                {submitted && (
+                  <div>                   
+                    <Graph quiz={quizzes[selectedQuiz]}></Graph>
+                  </div>
+                )}
               </div>
             )}
             {/*'******************* ADMIN VIEW ********************** */}
             {showAdmin && (
               <div className='quiz'>
                 <div>
-                  <form className='adminContainer'>
-                    {selectedQuiz == null && (
+                  {/* if no quiz is selected modify quiz buttons box and modify topics box are rendered */}
+                  {selectedQuiz == null && (
+                    <form className='adminContainer'>
                       <fieldset className='adminSet'>
                         <legend>
                           <h3>Muokkaa tenttejä!</h3>
                         </legend>
-                        {/* if no quiz is selected modify quiz buttons box and modify topics box are rendered */}
                         {quizzes.map((quiz, index) => (
                           <AdminQuizzes
                             key={quiz.quiz_id}
@@ -170,14 +166,11 @@ const QuizApp = () => {
                             setSubmitted={setSubmitted}
                           />
                         ))}
-                        {/* Add new quiz textfield */}
                         <AdminAddNewQuiz
                           dispatch={dispatch}
                           quizOrder={quizOrder}
                         />
                       </fieldset>
-                    )}
-                    {selectedQuiz == null && (
                       <fieldset className='adminSet'>
                         <legend>
                           <h3>Muokkaa aihepiireja!</h3>
@@ -193,13 +186,12 @@ const QuizApp = () => {
                         ))}
                         <AdminAddNewTopic dispatchTopic={dispatchTopic} />
                       </fieldset>
-                    )}
-                  </form>
+                    </form>
+                  )}
                 </div>
                 <div>
                   {/* if a quiz is selected, admin view of quiz questions is rendered */}
                   {selectedQuiz !== null && (
-                    /* questions of the selected quiz are mapped and rendered in ./components/AdminQuiz.js */
                     <div className='quiz'>
                       <AdminUpdateQuizTitle
                         {...quizzes[selectedQuiz]}
@@ -219,14 +211,12 @@ const QuizApp = () => {
                           />
                         )
                       )}
+                      <AdminAddNewQuestion
+                        {...quizzes[selectedQuiz]}
+                        selectedQuiz={selectedQuiz}
+                        dispatch={dispatch}
+                      />
                     </div>
-                  )}
-                  {selectedQuiz != null && (
-                    <AdminAddNewQuestion
-                      {...quizzes[selectedQuiz]}
-                      selectedQuiz={selectedQuiz}
-                      dispatch={dispatch}
-                    />
                   )}
                 </div>
               </div>
