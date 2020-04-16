@@ -1,15 +1,18 @@
 // ./Components/Question.js
 
-import React from 'react';
+import React, { useContext } from 'react';
 
 import '../css/app.css';
 import * as update from '../requests/update';
 import errorHandling from '../functions/errorHandling';
 import { UserCheckBox, CorrectCheckBox } from '../components/CheckBoxes';
 import QuestionResults from '../components/QuestionResults';
+import { QuizDispatch } from '../App';
 
-const Question = props => {
-  const { question, quizIndex, questionIndex, submitted, dispatch } = props;
+const Question = (props) => {
+  const { question, quizIndex, questionIndex, submitted } = props;
+  const dispatch = useContext(QuizDispatch);
+  console.log(`Question ${questionIndex} was rendered`);
 
   const handleClick = async (selected, option_id, optionIndex) => {
     try {
@@ -24,7 +27,7 @@ const Question = props => {
         value: selected,
         quizIndex: quizIndex,
         questionIndex: questionIndex,
-        optionIndex: optionIndex
+        optionIndex: optionIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -46,7 +49,7 @@ const Question = props => {
               <UserCheckBox
                 submitted={submitted}
                 checked={option.selected}
-                onChange={event =>
+                onChange={(event) =>
                   handleClick(
                     event.target.checked,
                     option.option_id,

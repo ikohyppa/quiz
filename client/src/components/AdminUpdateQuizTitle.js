@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import * as update from '../requests/update';
 import errorHandling from '../functions/errorHandling';
 
 import InputTextField from '../components/InputTextField';
+import { QuizDispatch } from '../App';
 
-const AdminUpdateQuizTitle = props => {
-  const { quiz, quiz_id, quizIndex, dispatch } = props;
+const AdminUpdateQuizTitle = (props) => {
+  const { quiz, quiz_id, quizIndex } = props;
+  const dispatch = useContext(QuizDispatch);
 
-  const handleUpdateQuizTitle = async updatedTitle => {
+  const handleUpdateQuizTitle = async (updatedTitle) => {
     try {
       await update.quiz(
         quiz_id,
@@ -18,7 +20,7 @@ const AdminUpdateQuizTitle = props => {
       dispatch({
         type: 'adminChangeQuiz',
         quiz: updatedTitle,
-        quizIndex: quizIndex
+        quizIndex: quizIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -29,7 +31,7 @@ const AdminUpdateQuizTitle = props => {
     <InputTextField
       defaultValue={quiz}
       size='medium'
-      onBlur={event => handleUpdateQuizTitle(event.target.value)}
+      onBlur={(event) => handleUpdateQuizTitle(event.target.value)}
     />
   );
 };

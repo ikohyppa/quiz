@@ -1,6 +1,6 @@
 // ./components/AdminTopics.js
 
-import React from 'react';
+import React, { useContext } from 'react';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,11 +10,15 @@ import * as update from '../requests/update';
 import errorHandling from '../functions/errorHandling';
 
 import InputTextField from '../components/InputTextField';
+import { QuizDispatch } from '../App';
+import { TopicDispatch } from '../App';
 
-const AdminTopics = props => {
-  const { topic, topic_id, index, dispatch, dispatchTopic } = props;
+const AdminTopics = (props) => {
+  const { topic, topic_id, index } = props;
+  const dispatch = useContext(QuizDispatch);
+  const dispatchTopic = useContext(TopicDispatch);
 
-  const handleAddTopic = async newTopic => {
+  const handleAddTopic = async (newTopic) => {
     try {
       await update.topic(
         topic_id,
@@ -24,12 +28,12 @@ const AdminTopics = props => {
       dispatch({
         type: 'adminChangeTopic2',
         topic_id: topic_id,
-        topic: newTopic
+        topic: newTopic,
       });
       dispatchTopic({
         type: 'adminChangeTopic',
         topic_id: topic_id,
-        topic: newTopic
+        topic: newTopic,
       });
     } catch (error) {
       errorHandling(error);
@@ -47,12 +51,12 @@ const AdminTopics = props => {
       // topic is deleted from topics state
       dispatchTopic({
         type: 'adminDeleteTopic',
-        topicIndex: index
+        topicIndex: index,
       });
       // topic is deleted from every question in ever quiz in quizzes state
       dispatch({
         type: 'adminDeleteTopic',
-        deletedTopic: topic
+        deletedTopic: topic,
       });
     } catch (error) {
       errorHandling(error);
@@ -65,7 +69,7 @@ const AdminTopics = props => {
         id='newTopicCaption'
         defaultValue={topic}
         size='small'
-        onBlur={event => {
+        onBlur={(event) => {
           handleAddTopic(event.target.value);
         }}
       />

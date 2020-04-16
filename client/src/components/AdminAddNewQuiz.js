@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import IconButton from '@material-ui/core/IconButton';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -8,9 +8,11 @@ import * as insert from '../requests/insert';
 import errorHandling from '../functions/errorHandling';
 
 import InputTextField from '../components/InputTextField';
+import { QuizDispatch } from '../App';
 
-const AdminAddNewQuiz = props => {
-  const { dispatch, quizOrder } = props;
+const AdminAddNewQuiz = (props) => {
+  const { quizOrder } = props;
+  const dispatch = useContext(QuizDispatch);
 
   const handleClick = async () => {
     try {
@@ -29,13 +31,13 @@ const AdminAddNewQuiz = props => {
         dispatch({
           type: 'adminAddQuiz',
           quiz: quiz,
-          quiz_id: quiz_id
+          quiz_id: quiz_id,
         });
         // after adding a new quiz, quizzes are sorted according current order
         // quizOrder is not toggled after sorting
         dispatch({
           type: 'toggleQuizOrder',
-          order: quizOrder // use current quiz order
+          order: quizOrder, // use current quiz order
         });
         //
         // newQuizTitle text field is cleared

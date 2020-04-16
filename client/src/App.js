@@ -1,6 +1,6 @@
 //QuizApp.js
 
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, createContext } from 'react';
 
 import './css/app.css';
 import TopBar from './components/TopBar';
@@ -20,6 +20,9 @@ import About from './components/About';
 
 import reducer from './QuizReducer';
 import reducerTopic from './TopicReducer';
+
+export const QuizDispatch = React.createContext(null);
+export const TopicDispatch = React.createContext(null);
 
 const QuizApp = () => {
   const [quizzes, dispatch] = useReducer(reducer, []);
@@ -63,176 +66,164 @@ const QuizApp = () => {
     else {
       localStorage.setItem('quizData', JSON.stringify(quizzes));
       localStorage.setItem('topicData', JSON.stringify(topics));
-      //dispatch({type: 'logState'});
     }
   }, [quizzes, topics]);
 
   return (
-    <div>
-      {/* rendered if not logged out */}
-      {!showLogout && (
+    <QuizDispatch.Provider value={dispatch}>
+      <TopicDispatch.Provider value={dispatchTopic}>
         <div>
-          {/* ******************* TOPBAR VIEW ********************** */}
-          {/* ./components/TopBar.js, top level buttons */}
-          <TopBar
-            statusAdmin={statusAdmin}
-            statusLogin={statusLogin}
-            setLoginMethod={setLoginMethod}
-            setSelectedQuiz={setSelectedQuiz}
-            setShowAbout={setShowAbout}
-            setShowAdmin={setShowAdmin}
-            setShowLogin={setShowLogin}
-            setShowLogout={setShowLogout}
-            setShowQuizzes={setShowQuizzes}
-            setSubmitted={setSubmitted}
-          ></TopBar>
-          <div>
-            {/* ******************* LOGIN VIEW ********************** */}
-            {/* ./components/Login.js, register/login form */}
-            {showLogin && (
-              <Login
+          {/* rendered if not logged out */}
+          {!showLogout && (
+            <div>
+              {/* ******************* TOPBAR VIEW ********************** */}
+              {/* ./components/TopBar.js, top level buttons */}
+              <TopBar
+                statusAdmin={statusAdmin}
+                statusLogin={statusLogin}
+                setLoginMethod={setLoginMethod}
+                setSelectedQuiz={setSelectedQuiz}
+                setShowAbout={setShowAbout}
+                setShowAdmin={setShowAdmin}
                 setShowLogin={setShowLogin}
-                setStatusLogin={setStatusLogin}
-                setStatusAdmin={setStatusAdmin}
-                setQuizOrder={setQuizOrder}
-                dispatch={dispatch}
-                dispatchTopic={dispatchTopic}
-                loginMethod={loginMethod}
-              ></Login>
-            )}
-            {/* ******************* USER VIEW ********************** */}
-            {showQuizzes && (
-              <div className='flex-container'>
-                {/* if no quiz is selected quiz buttons and quizOrder button are rendered */}
-                {selectedQuiz === null && (
-                  <div className='quiz'>
-                    {quizzes.map((quiz, index) => (
-                      <QuizSelect
-                        key={quiz.quiz_id}
-                        {...quiz}
-                        index={index}
-                        dispatch={dispatch}
-                        statusAdmin={statusAdmin}
-                        setSelectedQuiz={setSelectedQuiz}
-                        setSubmitted={setSubmitted}
-                      />
-                    ))}
-                    <QuizOrder
-                      dispatch={dispatch}
-                      quizOrder={quizOrder}
-                      setQuizOrder={setQuizOrder}
-                    />
-                  </div>
+                setShowLogout={setShowLogout}
+                setShowQuizzes={setShowQuizzes}
+                setSubmitted={setSubmitted}
+              ></TopBar>
+              <div>
+                {/* ******************* LOGIN VIEW ********************** */}
+                {/* ./components/Login.js, register/login form */}
+                {showLogin && (
+                  <Login
+                    setShowLogin={setShowLogin}
+                    setStatusLogin={setStatusLogin}
+                    setStatusAdmin={setStatusAdmin}
+                    setQuizOrder={setQuizOrder}
+                    loginMethod={loginMethod}
+                  ></Login>
                 )}
-                {/* if a quiz is selected, quiz is rendered */}
-                {selectedQuiz !== null && (
-                  <div className='quiz'>
-                    <Quiz
-                      quiz={quizzes[selectedQuiz]}
-                      quizIndex={selectedQuiz}
-                      dispatch={dispatch}
-                      submitted={submitted}
-                      setSubmitted={setSubmitted}
-                    />
-                  </div>
-                )}
-                {/* when quiz has been submitted the results graph is rendered */}
-                {submitted && (
-                  <div>                   
-                    <Graph quiz={quizzes[selectedQuiz]}></Graph>
-                  </div>
-                )}
-              </div>
-            )}
-            {/*'******************* ADMIN VIEW ********************** */}
-            {showAdmin && (
-              <div className='quiz'>
-                <div>
-                  {/* if no quiz is selected modify quiz buttons box and modify topics box are rendered */}
-                  {selectedQuiz == null && (
-                    <form className='adminContainer'>
-                      <fieldset className='adminSet'>
-                        <legend>
-                          <h3>Muokkaa tenttejä!</h3>
-                        </legend>
+                {/* ******************* USER VIEW ********************** */}
+                {showQuizzes && (
+                  <div className='flex-container'>
+                    {/* if no quiz is selected quiz buttons and quizOrder button are rendered */}
+                    {selectedQuiz === null && (
+                      <div className='quiz'>
                         {quizzes.map((quiz, index) => (
-                          <AdminQuizzes
+                          <QuizSelect
                             key={quiz.quiz_id}
                             {...quiz}
                             index={index}
-                            dispatch={dispatch}
                             statusAdmin={statusAdmin}
                             setSelectedQuiz={setSelectedQuiz}
                             setSubmitted={setSubmitted}
                           />
                         ))}
-                        <AdminAddNewQuiz
-                          dispatch={dispatch}
+                        <QuizOrder
                           quizOrder={quizOrder}
+                          setQuizOrder={setQuizOrder}
                         />
-                      </fieldset>
-                      <fieldset className='adminSet'>
-                        <legend>
-                          <h3>Muokkaa aihepiireja!</h3>
-                        </legend>
-                        {topics.map((topic, index) => (
-                          <AdminTopics
-                            key={topic.topic_id}
-                            {...topic}
-                            index={index}
-                            dispatch={dispatch}
-                            dispatchTopic={dispatchTopic}
-                          />
-                        ))}
-                        <AdminAddNewTopic dispatchTopic={dispatchTopic} />
-                      </fieldset>
-                    </form>
-                  )}
-                </div>
-                <div>
-                  {/* if a quiz is selected, admin view of quiz questions is rendered */}
-                  {selectedQuiz !== null && (
-                    <div className='quiz'>
-                      <AdminUpdateQuizTitle
-                        {...quizzes[selectedQuiz]}
-                        quizIndex={selectedQuiz}
-                        dispatch={dispatchTopic}
-                      />
-                      {quizzes[selectedQuiz].questions.map(
-                        (question, questionIndex) => (
-                          <AdminQuiz
-                            key={question.question_id}
-                            {...question}
-                            quizIndex={selectedQuiz}
-                            questionIndex={questionIndex}
-                            topics={topics}
-                            dispatch={dispatch}
-                            dispatchTopic={dispatchTopic}
-                          />
-                        )
+                      </div>
+                    )}
+                    {/* if a quiz is selected, quiz is rendered */}
+                    {selectedQuiz !== null && (
+                      <div className='quiz'>
+                        <Quiz
+                          quiz={quizzes[selectedQuiz]}
+                          quizIndex={selectedQuiz}
+                          submitted={submitted}
+                          setSubmitted={setSubmitted}
+                        />
+                      </div>
+                    )}
+                    {/* when quiz has been submitted the results graph is rendered */}
+                    {submitted && (
+                      <div>
+                        <Graph quiz={quizzes[selectedQuiz]}></Graph>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/*'******************* ADMIN VIEW ********************** */}
+                {showAdmin && (
+                  <div className='quiz'>
+                    <div>
+                      {/* if no quiz is selected modify quiz buttons box and modify topics box are rendered */}
+                      {selectedQuiz == null && (
+                        <form className='adminContainer'>
+                          <fieldset className='adminSet'>
+                            <legend>
+                              <h3>Muokkaa tenttejä!</h3>
+                            </legend>
+                            {quizzes.map((quiz, index) => (
+                              <AdminQuizzes
+                                key={quiz.quiz_id}
+                                {...quiz}
+                                index={index}
+                                statusAdmin={statusAdmin}
+                                setSelectedQuiz={setSelectedQuiz}
+                                setSubmitted={setSubmitted}
+                              />
+                            ))}
+                            <AdminAddNewQuiz quizOrder={quizOrder} />
+                          </fieldset>
+                          <fieldset className='adminSet'>
+                            <legend>
+                              <h3>Muokkaa aihepiireja!</h3>
+                            </legend>
+                            {topics.map((topic, index) => (
+                              <AdminTopics
+                                key={topic.topic_id}
+                                {...topic}
+                                index={index}
+                              />
+                            ))}
+                            <AdminAddNewTopic />
+                          </fieldset>
+                        </form>
                       )}
-                      <AdminAddNewQuestion
-                        {...quizzes[selectedQuiz]}
-                        selectedQuiz={selectedQuiz}
-                        dispatch={dispatch}
-                      />
                     </div>
-                  )}
-                </div>
+                    <div>
+                      {/* if a quiz is selected, admin view of quiz questions is rendered */}
+                      {selectedQuiz !== null && (
+                        <div className='quiz'>
+                          <AdminUpdateQuizTitle
+                            {...quizzes[selectedQuiz]}
+                            quizIndex={selectedQuiz}
+                          />
+                          {quizzes[selectedQuiz].questions.map(
+                            (question, questionIndex) => (
+                              <AdminQuiz
+                                key={question.question_id}
+                                {...question}
+                                quizIndex={selectedQuiz}
+                                questionIndex={questionIndex}
+                                topics={topics}
+                              />
+                            )
+                          )}
+                          <AdminAddNewQuestion
+                            {...quizzes[selectedQuiz]}
+                            selectedQuiz={selectedQuiz}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+          {/* ******************* ABOUT VIEW ********************** */}
+          {showAbout && <About setShowAbout={setShowAbout} />}
+          {/* ******************* LOGGED OUT VIEW ********************** */}
+          {showLogout && (
+            <div>
+              <h1 className='quiz'>Hyvä yritys. Parempi tuuri ensikerralla.</h1>
+            </div>
+          )}
         </div>
-      )}
-      {/* ******************* ABOUT VIEW ********************** */}
-      {showAbout && <About setShowAbout={setShowAbout} />}
-      {/* ******************* LOGGED OUT VIEW ********************** */}
-      {showLogout && (
-        <div>
-          <h1 className='quiz'>Hyvä yritys. Parempi tuuri ensikerralla.</h1>
-        </div>
-      )}
-    </div>
+      </TopicDispatch.Provider>
+    </QuizDispatch.Provider>
   );
 };
 

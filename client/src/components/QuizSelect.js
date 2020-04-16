@@ -1,10 +1,11 @@
 // ../components/Quiz.js
 
-import React from 'react';
+import React, {useContext} from 'react';
 
 import errorHandling from '../functions/errorHandling';
 import getQuestions from '../functions/getQuestions';
 import { QuizButton } from '../components/Buttons';
+import {QuizDispatch} from '../App';
 
 const QuizSelect = props => {
   const {
@@ -12,11 +13,12 @@ const QuizSelect = props => {
     quiz_id,
     questions,
     index,
-    dispatch,
     statusAdmin,
     setSelectedQuiz,
     setSubmitted
   } = props;
+
+  const dispatch = useContext(QuizDispatch);
 
   const handleGetQuestions = async (quiz_id, questions_length, statusAdmin) => {
     try {

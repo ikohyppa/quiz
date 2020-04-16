@@ -1,22 +1,20 @@
 // ../components/Login.js
 
-import React from 'react';
+import React, { useContext } from 'react';
 
 import errorHandling from '../functions/errorHandling';
 import login from '../functions/login';
 import LoginBox from '../components/LoginBox';
+import { QuizDispatch } from '../App';
+import { TopicDispatch } from '../App';
 
-const Login = props => {
-  const {
-    dispatch,
-    dispatchTopic,
-    setShowLogin,
-    setStatusLogin,
-    setStatusAdmin,
-    loginMethod
-  } = props;
+const Login = (props) => {
+  const { setShowLogin, setStatusLogin, setStatusAdmin, loginMethod } = props;
 
-  const handleLogin = async loginMethod => {
+  const dispatch = useContext(QuizDispatch);
+  const dispatchTopic = useContext(TopicDispatch);
+
+  const handleLogin = async (loginMethod) => {
     try {
       const [loginOk, status, quizData, topicData] = await login(loginMethod);
       if (loginOk) {
@@ -25,7 +23,7 @@ const Login = props => {
         if (status === 'admin') {
           dispatchTopic({
             type: 'initialize',
-            data: topicData
+            data: topicData,
           });
         }
         setShowLogin(false);

@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import * as get from '../requests/get';
 import * as update from '../requests/update';
 
 import { OutlinedButton } from '../components/Buttons';
 import Question from '../components/Question';
+import { QuizDispatch } from '../App';
 
-const Quiz = props => {
-  const { quiz, quizIndex, dispatch, submitted, setSubmitted } = props;
+const Quiz = (props) => {
+  const { quiz, quizIndex, submitted, setSubmitted } = props;
+  const dispatch = useContext(QuizDispatch);
 
   const handleSubmit = async () => {
     await update.submitted(
@@ -21,7 +23,7 @@ const Quiz = props => {
     dispatch({
       type: 'addCorrect',
       quizIndex: quizIndex,
-      correct: correct
+      correct: correct,
     });
     setSubmitted(!submitted);
   };
@@ -42,7 +44,6 @@ const Quiz = props => {
             quizIndex={quizIndex}
             questionIndex={questionIndex}
             submitted={submitted}
-            dispatch={dispatch}
           />
         ))}
       {!submitted && (

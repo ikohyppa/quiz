@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import IconButton from '@material-ui/core/IconButton';
 
 import * as insert from '../requests/insert';
 import errorHandling from '../functions/errorHandling';
+import { QuizDispatch } from '../App';
 
-const AdminAddNewQuestion = props => {
-  const { quiz_id, selectedQuiz, dispatch } = props;
+const AdminAddNewQuestion = (props) => {
+  const { quiz_id, selectedQuiz } = props;
+  const dispatch = useContext(QuizDispatch);
 
   const handleAddNewQuestion = async () => {
     try {
@@ -21,7 +23,7 @@ const AdminAddNewQuestion = props => {
         type: 'adminAddQuestion',
         quizIndex: selectedQuiz,
         quiz_id: quiz_id,
-        question_id: question_id
+        question_id: question_id,
       });
     } catch (error) {
       errorHandling(error);

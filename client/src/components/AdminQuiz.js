@@ -1,6 +1,6 @@
 // ./Components/Admin.js
 
-import React from 'react';
+import React, { useContext } from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,8 +14,10 @@ import errorHandling from '../functions/errorHandling';
 
 import InputTextField from '../components/InputTextField';
 import { UserCheckBox } from '../components/CheckBoxes';
+import { QuizDispatch } from '../App';
+import { TopicDispatch } from '../App';
 
-const AdminQuiz = props => {
+const AdminQuiz = (props) => {
   const {
     question,
     question_id,
@@ -24,11 +26,12 @@ const AdminQuiz = props => {
     quizIndex,
     questionIndex,
     topics,
-    dispatch,
-    dispatchTopic
   } = props;
 
-  const handleUpdateQuestion = async updatedQuestion => {
+  const dispatch = useContext(QuizDispatch);
+  const dispatchTopic = useContext(TopicDispatch);
+
+  const handleUpdateQuestion = async (updatedQuestion) => {
     try {
       await update.question(
         question_id,
@@ -39,7 +42,7 @@ const AdminQuiz = props => {
         type: 'adminChangeQuestion',
         question: updatedQuestion,
         quizIndex: quizIndex,
-        questionIndex: questionIndex
+        questionIndex: questionIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -59,14 +62,14 @@ const AdminQuiz = props => {
       dispatch({
         type: 'adminDeleteQuestion',
         quizIndex: quizIndex,
-        questionIndex: questionIndex
+        questionIndex: questionIndex,
       });
     } catch (error) {
       errorHandling(error);
     }
   };
 
-  const handleUpdateTopic = async updatedTopic => {
+  const handleUpdateTopic = async (updatedTopic) => {
     try {
       // first it is checked if topic is already listed in DB by the lenght of returned SELECT query
       let topic_id = await get.topic(
@@ -84,7 +87,7 @@ const AdminQuiz = props => {
         dispatchTopic({
           type: 'adminAddTopic',
           topic_id: topic_id,
-          topic: updatedTopic
+          topic: updatedTopic,
         });
       }
       // in any case (new or old topic) topic_id is updated into question table in DB
@@ -99,7 +102,7 @@ const AdminQuiz = props => {
         quizIndex: quizIndex,
         questionIndex: questionIndex,
         topic_id: topic_id,
-        topic: updatedTopic
+        topic: updatedTopic,
       });
     } catch (error) {
       errorHandling(error);
@@ -120,7 +123,7 @@ const AdminQuiz = props => {
         value: correct,
         quizIndex: quizIndex,
         questionIndex: questionIndex,
-        optionIndex: optionIndex
+        optionIndex: optionIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -140,7 +143,7 @@ const AdminQuiz = props => {
         value: updatedOption,
         quizIndex: quizIndex,
         questionIndex: questionIndex,
-        optionIndex: optionIndex
+        optionIndex: optionIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -156,7 +159,7 @@ const AdminQuiz = props => {
         type: 'adminDeleteOption',
         quizIndex: quizIndex,
         questionIndex: questionIndex,
-        optionIndex: optionIndex
+        optionIndex: optionIndex,
       });
     } catch (error) {
       errorHandling(error);
@@ -174,7 +177,7 @@ const AdminQuiz = props => {
         quizIndex: quizIndex,
         questionIndex: questionIndex,
         question_id: question_id,
-        option_id: option_id
+        option_id: option_id,
       });
     } catch (error) {
       errorHandling(error);
@@ -195,7 +198,7 @@ const AdminQuiz = props => {
               defaultValue={question}
               size='small'
               style={{ width: 500 }}
-              onBlur={event => handleUpdateQuestion(event.target.value)}
+              onBlur={(event) => handleUpdateQuestion(event.target.value)}
             />
             <IconButton onClick={handleDeleteQuestion}>
               <DeleteIcon />
@@ -209,10 +212,10 @@ const AdminQuiz = props => {
               list='topics'
               type='text'
               defaultValue={topic}
-              onBlur={event => handleUpdateTopic(event.target.value)}
+              onBlur={(event) => handleUpdateTopic(event.target.value)}
             />
             <datalist id='topics'>
-              {props.topics.map((topic, i) => (
+              {topics.map((topic, i) => (
                 <option key={topic.topic + i} value={topic.topic} />
               ))}
             </datalist>
@@ -226,7 +229,7 @@ const AdminQuiz = props => {
               <div className='aling-buttons' key={option.option_id}>
                 <UserCheckBox
                   checked={option.correct}
-                  onChange={event =>
+                  onChange={(event) =>
                     toggleCheckBox(
                       option.option_id,
                       optionIndex,
@@ -238,7 +241,7 @@ const AdminQuiz = props => {
                   defaultValue={option.answer}
                   size='small'
                   style={{ width: 400 }}
-                  onBlur={event =>
+                  onBlur={(event) =>
                     handleUpdateOption(
                       option.option_id,
                       optionIndex,

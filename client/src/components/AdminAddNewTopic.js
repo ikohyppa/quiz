@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import IconButton from '@material-ui/core/IconButton';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -9,9 +9,10 @@ import errorHandling from '../functions/errorHandling';
 import '../css/app.css';
 
 import InputTextField from '../components/InputTextField';
+import { TopicDispatch } from '../App';
 
-const AdminAddNewTopic = props => {
-  const { dispatchTopic } = props;
+const AdminAddNewTopic = () => {
+  const dispatchTopic = useContext(TopicDispatch);
 
   const handleAddNewTopic = async () => {
     try {
@@ -31,7 +32,7 @@ const AdminAddNewTopic = props => {
         dispatchTopic({
           type: 'adminAddTopic',
           topic_id: topic_id,
-          topic: topic
+          topic: topic,
         });
       }
       document.getElementById('newTopic').value = '';

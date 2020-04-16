@@ -1,11 +1,15 @@
 // ../components/QuizOrder.js
 
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { OutlinedButton } from '../components/Buttons';
+import {QuizDispatch} from '../App';
+
 
 const QuizOrder = props => {
-  const { dispatch, quizOrder, setQuizOrder } = props;
+  const { quizOrder, setQuizOrder } = props;
+  const dispatch = useContext(QuizDispatch);
+  
 
   const toggleOrder = () => {
     // quizzes is sorted, opposite the current order

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -9,20 +9,21 @@ import * as update from '../requests/update';
 import errorHandling from '../functions/errorHandling';
 import getQuestions from '../functions/getQuestions';
 import { QuizButton } from '../components/Buttons';
+import { QuizDispatch } from '../App';
 
-const AdminQuizzes = props => {
+const AdminQuizzes = (props) => {
   const {
     quiz,
     quiz_id,
     questions,
     index,
-    dispatch,
     statusAdmin,
     setSelectedQuiz,
-    setSubmitted
+    setSubmitted,
   } = props;
 
   const [modifyTitle, setModifyTitle] = useState(false);
+  const dispatch = useContext(QuizDispatch);
 
   const toggleEditQuizName = async (newQuizName, quiz_id, index) => {
     try {
@@ -34,7 +35,7 @@ const AdminQuizzes = props => {
       dispatch({
         type: 'adminChangeQuiz',
         quiz: newQuizName,
-        quizIndex: index
+        quizIndex: index,
       });
       setModifyTitle(false);
     } catch (error) {
@@ -53,13 +54,13 @@ const AdminQuizzes = props => {
         dispatch({
           type: 'addDbQuestions',
           questions: questions,
-          index: index
+          index: index,
         });
         if (submitted) {
           dispatch({
             type: 'addCorrect',
             quizIndex: index,
-            correct: correct
+            correct: correct,
           });
         }
       }
@@ -78,7 +79,7 @@ const AdminQuizzes = props => {
       await del.quiz(quiz_id, JSON.parse(localStorage.getItem('token')));
       dispatch({
         type: 'adminDeleteQuiz',
-        quizIndex: index
+        quizIndex: index,
       });
     } catch (error) {
       errorHandling(error);
@@ -93,7 +94,7 @@ const AdminQuizzes = props => {
           name={
             <input
               defaultValue={quiz}
-              onBlur={event => {
+              onBlur={(event) => {
                 toggleEditQuizName(event.target.value, quiz_id, index);
               }}
             />
