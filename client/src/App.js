@@ -1,6 +1,6 @@
 //QuizApp.js
 
-import React, { useState, useEffect, useReducer, createContext } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 
 import './css/app.css';
 import TopBar from './components/TopBar';
