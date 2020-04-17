@@ -9,7 +9,7 @@ import { QuizDispatch } from '../App';
 import { TopicDispatch } from '../App';
 
 const Login = (props) => {
-  const { setShowLogin, setStatusLogin, setStatusAdmin, loginMethod } = props;
+  const { state, setState } = props;
 
   const dispatch = useContext(QuizDispatch);
   const dispatchTopic = useContext(TopicDispatch);
@@ -26,9 +26,14 @@ const Login = (props) => {
             data: topicData,
           });
         }
-        setShowLogin(false);
-        setStatusLogin(true);
-        setStatusAdmin(status === 'admin');
+        setState((prevState) => {
+          return {
+            ...prevState,
+            isAdmin: status === 'admin',
+            isLoggedIn: true,
+            showLogin: false,
+          };
+        });
       }
     } catch (error) {
       errorHandling(error);
@@ -37,8 +42,8 @@ const Login = (props) => {
 
   return (
     <LoginBox
-      loginMethod={loginMethod}
-      onClick={() => handleLogin(loginMethod)}
+      loginMethod={state.loginMethod}
+      onClick={() => handleLogin(state.loginMethod)}
     />
   );
 };

@@ -3,25 +3,27 @@
 import React, { useContext } from 'react';
 
 import { OutlinedButton } from '../components/Buttons';
-import {QuizDispatch} from '../App';
+import { QuizDispatch } from '../App';
 
-
-const QuizOrder = props => {
-  const { quizOrder, setQuizOrder } = props;
+const QuizOrder = (props) => {
+  const { state, setState } = props;
   const dispatch = useContext(QuizDispatch);
-  
 
   const toggleOrder = () => {
     // quizzes is sorted, opposite the current order
     dispatch({
       type: 'toggleQuizOrder',
-      order: !quizOrder
+      order: !state.quizOrder,
     });
     // quizOrder state is toggled
-    setQuizOrder(!quizOrder);
+    setState((prevState) => {
+      return { ...prevState, quizOrder: !prevState.quizOrder };
+    });
   };
 
-  let buttonName = quizOrder ? 'Järjestä tentit Ö->A' : 'Järjestä tentit A->Ö';
+  let buttonName = state.quizOrder
+    ? 'Järjestä tentit Ö->A'
+    : 'Järjestä tentit A->Ö';
 
   return <OutlinedButton name={buttonName} onClick={toggleOrder} />;
 };

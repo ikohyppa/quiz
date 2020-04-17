@@ -12,15 +12,7 @@ import { QuizButton } from '../components/Buttons';
 import { QuizDispatch } from '../App';
 
 const AdminQuizzes = (props) => {
-  const {
-    quiz,
-    quiz_id,
-    questions,
-    index,
-    statusAdmin,
-    setSelectedQuiz,
-    setSubmitted,
-  } = props;
+  const { quiz, quiz_id, questions, index, state, setState } = props;
 
   const [modifyTitle, setModifyTitle] = useState(false);
   const dispatch = useContext(QuizDispatch);
@@ -43,12 +35,12 @@ const AdminQuizzes = (props) => {
     }
   };
 
-  const handleGetQuestions = async (quiz_id, questions_length, statusAdmin) => {
+  const handleGetQuestions = async (quiz_id, questions_length, isAdmin) => {
     try {
       const [submitted, questions, correct] = await getQuestions(
         quiz_id,
         questions_length,
-        statusAdmin
+        isAdmin
       );
       if (questions_length === 0) {
         dispatch({
@@ -65,9 +57,13 @@ const AdminQuizzes = (props) => {
         }
       }
       // when quizzes data is ready setSelectedQuiz is used to show the quiz
-      setSelectedQuiz(index);
+      setState((prevState) => {
+        return { ...prevState, selectedQuiz: index };
+      });
       // showCorrct state is set according to the submitted state
-      setSubmitted(submitted);
+      setState((prevState) => {
+        return { ...prevState, submitted: submitted };
+      });
     } catch (error) {
       errorHandling(error);
     }
@@ -104,7 +100,7 @@ const AdminQuizzes = (props) => {
         <QuizButton
           name={quiz}
           onClick={() =>
-            handleGetQuestions(quiz_id, questions.length, statusAdmin)
+            handleGetQuestions(quiz_id, questions.length, state.isAdmin)
           }
         />
       )}

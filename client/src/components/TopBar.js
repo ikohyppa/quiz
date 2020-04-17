@@ -7,68 +7,77 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { TopBarBtn } from '../components/Buttons';
 
 export default function TopBar(props) {
-  const {
-    statusAdmin,
-    statusLogin,
-    setLoginMethod,
-    setSelectedQuiz,
-    setShowAbout,
-    setShowAdmin,
-    setShowLogin,
-    setShowLogout,
-    setShowQuizzes,
-    setSubmitted
-  } = props;
+  const { state, setState } = props;
+
   function setShowFalse() {
-    setShowLogin(false);
-    setSelectedQuiz(null);
-    setShowAdmin(false);
-    setShowAbout(false);
-    setShowQuizzes(false);
-    setSubmitted(false);
+    setState((prevState) => {
+      return {
+        ...prevState,
+        selectedQuiz: null,
+        showAbout: false,
+        showAdmin: false,
+        showLogin: false,
+        showQuizzes: false,
+        submitted: false,
+      };
+    });
   }
 
   return (
     <AppBar position='static'>
       <Toolbar>
-        {statusLogin && (
+        {state.isLoggedIn && (
           <h3>Hei {JSON.parse(localStorage.getItem('user'))}!</h3>
         )}
-        {!statusLogin && (
+        {!state.isLoggedIn && (
           <TopBarBtn
             name={'Rekisteröidy'}
             onClick={() => {
               setShowFalse();
-              setShowLogin(true);
-              setLoginMethod('Rekisteröidy');
+              setState((prevState) => {
+                return {
+                  ...prevState,
+                  loginMethod: 'Rekisteröidy',
+                  showLogin: true,
+                };
+              });
             }}
           />
         )}
-        {!statusLogin && (
+        {!state.isLoggedIn && (
           <TopBarBtn
             name={'Kirjaudu'}
             onClick={() => {
               setShowFalse();
-              setShowLogin(true);
-              setLoginMethod('Kirjaudu');
+              setState((prevState) => {
+                return {
+                  ...prevState,
+                  loginMethod: 'Kirjaudu',
+                  showLogin: true,
+                };
+              });
             }}
           />
         )}
-        {statusLogin && (
+        {state.isLoggedIn && (
           <TopBarBtn
             name={'Tentit'}
             onClick={() => {
               setShowFalse();
-              setShowQuizzes(true);
+              setState((prevState) => {
+                return { ...prevState, showQuizzes: true };
+              });
             }}
           />
         )}
-        {statusLogin && statusAdmin && (
+        {state.isLoggedIn && state.isAdmin && (
           <TopBarBtn
             name={'Admin'}
             onClick={() => {
               setShowFalse();
-              props.setShowAdmin(true);
+              setState((prevState) => {
+                return { ...prevState, showAdmin: true };
+              });
             }}
           />
         )}
@@ -77,18 +86,22 @@ export default function TopBar(props) {
             name={'Info'}
             onClick={() => {
               setShowFalse();
-              setShowAbout(true);
+              setState((prevState) => {
+                return { ...prevState, showAbout: true };
+              });
             }}
           />
         }
-        {statusLogin && (
+        {state.isLoggedIn && (
           <TopBarBtn
             name={'Kirjaudu ulos'}
             onClick={() => {
               localStorage.setItem('token', '');
               localStorage.setItem('user', '');
               setShowFalse();
-              setShowLogout(true);
+              setState((prevState) => {
+                return { ...prevState, showLogout: true };
+              });
             }}
           />
         )}

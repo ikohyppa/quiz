@@ -11,7 +11,7 @@ import InputTextField from '../components/InputTextField';
 import { QuizDispatch } from '../App';
 
 const AdminAddNewQuiz = (props) => {
-  const { quizOrder } = props;
+  const { state } = props;
   const dispatch = useContext(QuizDispatch);
 
   const handleClick = async () => {
@@ -37,7 +37,7 @@ const AdminAddNewQuiz = (props) => {
         // quizOrder is not toggled after sorting
         dispatch({
           type: 'toggleQuizOrder',
-          order: quizOrder, // use current quiz order
+          order: state.quizOrder, // use current quiz order
         });
         //
         // newQuizTitle text field is cleared

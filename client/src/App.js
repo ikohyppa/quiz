@@ -28,18 +28,22 @@ const QuizApp = () => {
   const [quizzes, dispatch] = useReducer(reducer, []);
   const [topics, dispatchTopic] = useReducer(reducerTopic, []);
 
+  const initialState = {
+    isAdmin: false, // admin status of the user, true = is admin
+    isLoggedIn: false,
+    loginMethod: '',
+    quizOrder: true, // order of quiz titles, true = a->ö
+    selectedQuiz: null, // is !null if a quiz is selected -> selected quiz is shown
+    showAbout: false, // if true info page is shown
+    showAdmin: false, // if true admin side is rendered
+    showLogin: false, // if true 'Login' view is shown
+    showLogout: false, // if true 'Logget out' view is shown
+    showQuizzes: false, // if true buttons of available quizzes are shown
+    submitted: false, // if true quiz is locked and correct answer options are shown
+  };
+
   const [initialized, setInitialized] = useState(false); // has quizzes state been initialised or not
-  const [showLogout, setShowLogout] = useState(false); // if true 'Logget out' view is shown
-  const [showLogin, setShowLogin] = useState(false); // if true 'Login' view is shown
-  const [showQuizzes, setShowQuizzes] = useState(false); // if true buttons of available quizzes are shown
-  const [selectedQuiz, setSelectedQuiz] = useState(null); // is !null if a quiz is selected -> selected quiz is shown
-  const [submitted, setSubmitted] = useState(false); // if true quiz is locked and correct answer options are shown
-  const [showAdmin, setShowAdmin] = useState(false); // if true admin side is rendered
-  const [quizOrder, setQuizOrder] = useState(true); // boolean based on which quizzes are ordered a->ö / ö->a
-  const [statusLogin, setStatusLogin] = useState(false);
-  const [statusAdmin, setStatusAdmin] = useState(false);
-  const [showAbout, setShowAbout] = useState(false);
-  const [loginMethod, setLoginMethod] = useState('');
+  const [state, setState] = useState(initialState);
 
   useEffect(() => {
     // on first run !initialized is true
@@ -74,81 +78,60 @@ const QuizApp = () => {
       <TopicDispatch.Provider value={dispatchTopic}>
         <div>
           {/* rendered if not logged out */}
-          {!showLogout && (
+          {!state.showLogout && (
             <div>
               {/* ******************* TOPBAR VIEW ********************** */}
               {/* ./components/TopBar.js, top level buttons */}
-              <TopBar
-                statusAdmin={statusAdmin}
-                statusLogin={statusLogin}
-                setLoginMethod={setLoginMethod}
-                setSelectedQuiz={setSelectedQuiz}
-                setShowAbout={setShowAbout}
-                setShowAdmin={setShowAdmin}
-                setShowLogin={setShowLogin}
-                setShowLogout={setShowLogout}
-                setShowQuizzes={setShowQuizzes}
-                setSubmitted={setSubmitted}
-              ></TopBar>
+              <TopBar state={state} setState={setState}></TopBar>
               <div>
                 {/* ******************* LOGIN VIEW ********************** */}
                 {/* ./components/Login.js, register/login form */}
-                {showLogin && (
-                  <Login
-                    setShowLogin={setShowLogin}
-                    setStatusLogin={setStatusLogin}
-                    setStatusAdmin={setStatusAdmin}
-                    setQuizOrder={setQuizOrder}
-                    loginMethod={loginMethod}
-                  ></Login>
+                {state.showLogin && (
+                  <Login state={state} setState={setState}></Login>
                 )}
                 {/* ******************* USER VIEW ********************** */}
-                {showQuizzes && (
+                {state.showQuizzes && (
                   <div className='flex-container'>
                     {/* if no quiz is selected quiz buttons and quizOrder button are rendered */}
-                    {selectedQuiz === null && (
+                    {state.selectedQuiz === null && (
                       <div className='quiz'>
                         {quizzes.map((quiz, index) => (
                           <QuizSelect
                             key={quiz.quiz_id}
                             {...quiz}
                             index={index}
-                            statusAdmin={statusAdmin}
-                            setSelectedQuiz={setSelectedQuiz}
-                            setSubmitted={setSubmitted}
+                            state={state}
+                            setState={setState}
                           />
                         ))}
-                        <QuizOrder
-                          quizOrder={quizOrder}
-                          setQuizOrder={setQuizOrder}
-                        />
+                        <QuizOrder state={state} setState={setState} />
                       </div>
                     )}
                     {/* if a quiz is selected, quiz is rendered */}
-                    {selectedQuiz !== null && (
+                    {state.selectedQuiz !== null && (
                       <div className='quiz'>
                         <Quiz
-                          quiz={quizzes[selectedQuiz]}
-                          quizIndex={selectedQuiz}
-                          submitted={submitted}
-                          setSubmitted={setSubmitted}
+                          quiz={quizzes[state.selectedQuiz]}
+                          quizIndex={state.selectedQuiz}
+                          state={state}
+                          setState={setState}
                         />
                       </div>
                     )}
                     {/* when quiz has been submitted the results graph is rendered */}
-                    {submitted && (
+                    {state.submitted && (
                       <div>
-                        <Graph quiz={quizzes[selectedQuiz]}></Graph>
+                        <Graph quiz={quizzes[state.selectedQuiz]}></Graph>
                       </div>
                     )}
                   </div>
                 )}
                 {/*'******************* ADMIN VIEW ********************** */}
-                {showAdmin && (
+                {state.showAdmin && (
                   <div className='quiz'>
                     <div>
                       {/* if no quiz is selected modify quiz buttons box and modify topics box are rendered */}
-                      {selectedQuiz == null && (
+                      {state.selectedQuiz == null && (
                         <form className='adminContainer'>
                           <fieldset className='adminSet'>
                             <legend>
@@ -159,12 +142,11 @@ const QuizApp = () => {
                                 key={quiz.quiz_id}
                                 {...quiz}
                                 index={index}
-                                statusAdmin={statusAdmin}
-                                setSelectedQuiz={setSelectedQuiz}
-                                setSubmitted={setSubmitted}
+                                state={state}
+                                setState={setState}
                               />
                             ))}
-                            <AdminAddNewQuiz quizOrder={quizOrder} />
+                            <AdminAddNewQuiz state={state} />
                           </fieldset>
                           <fieldset className='adminSet'>
                             <legend>
@@ -184,26 +166,26 @@ const QuizApp = () => {
                     </div>
                     <div>
                       {/* if a quiz is selected, admin view of quiz questions is rendered */}
-                      {selectedQuiz !== null && (
+                      {state.selectedQuiz !== null && (
                         <div className='quiz'>
                           <AdminUpdateQuizTitle
-                            {...quizzes[selectedQuiz]}
-                            quizIndex={selectedQuiz}
+                            {...quizzes[state.selectedQuiz]}
+                            quizIndex={state.selectedQuiz}
                           />
-                          {quizzes[selectedQuiz].questions.map(
+                          {quizzes[state.selectedQuiz].questions.map(
                             (question, questionIndex) => (
                               <AdminQuiz
                                 key={question.question_id}
                                 {...question}
-                                quizIndex={selectedQuiz}
+                                quizIndex={state.selectedQuiz}
                                 questionIndex={questionIndex}
                                 topics={topics}
                               />
                             )
                           )}
                           <AdminAddNewQuestion
-                            {...quizzes[selectedQuiz]}
-                            selectedQuiz={selectedQuiz}
+                            {...quizzes[state.selectedQuiz]}
+                            selectedQuiz={state.selectedQuiz}
                           />
                         </div>
                       )}
@@ -214,9 +196,9 @@ const QuizApp = () => {
             </div>
           )}
           {/* ******************* ABOUT VIEW ********************** */}
-          {showAbout && <About setShowAbout={setShowAbout} />}
+          {state.showAbout && <About setState={setState} />}
           {/* ******************* LOGGED OUT VIEW ********************** */}
-          {showLogout && (
+          {state.showLogout && (
             <div>
               <h1 className='quiz'>Hyvä yritys. Parempi tuuri ensikerralla.</h1>
             </div>

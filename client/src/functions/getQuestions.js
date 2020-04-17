@@ -4,7 +4,7 @@ import * as get from '../requests/get';
 import getDbData from '../functions/getDbData';
 import errorHandling from '../functions/errorHandling';
 
-const getQuestions = async (quiz_id, questions_length, statusAdmin) => {
+const getQuestions = async (quiz_id, questions_length, isAdmin) => {
   let submitted = false;
   let correct = [];
   let questions = [];
@@ -18,7 +18,7 @@ const getQuestions = async (quiz_id, questions_length, statusAdmin) => {
     );
     // on first time select quiz.questions.length is 0, and questions are get from DB
     if (questions_length === 0) {
-      questions = await getDbData(quiz_id, statusAdmin);
+      questions = await getDbData(quiz_id, isAdmin);
       // if the quiz has been submitted the correct answer are get from DB
       if (submitted) {
         correct = await get.correct(

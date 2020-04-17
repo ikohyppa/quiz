@@ -5,8 +5,8 @@ import { QuizButton } from '../components/Buttons';
 
 import '../css/app.css';
 
-const About = props => {
-  const { setShowAbout } = props;
+const About = (props) => {
+  const { setState } = props;
   return (
     <div margin={50}>
       <Paper className='info' elevation={3} variant='outlined'>
@@ -33,7 +33,9 @@ const About = props => {
       <QuizButton
         name='Sulje'
         onClick={() => {
-          setShowAbout(false);
+          setState((prevState) => {
+            return { ...prevState, showAbout: false };
+          });
         }}
       />
     </div>

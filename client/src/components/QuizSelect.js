@@ -1,50 +1,53 @@
 // ../components/Quiz.js
 
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 
 import errorHandling from '../functions/errorHandling';
 import getQuestions from '../functions/getQuestions';
 import { QuizButton } from '../components/Buttons';
-import {QuizDispatch} from '../App';
+import { QuizDispatch } from '../App';
 
-const QuizSelect = props => {
+const QuizSelect = (props) => {
   const {
     quiz,
     quiz_id,
     questions,
     index,
-    statusAdmin,
-    setSelectedQuiz,
-    setSubmitted
+    state,
+    setState,
   } = props;
 
   const dispatch = useContext(QuizDispatch);
 
-  const handleGetQuestions = async (quiz_id, questions_length, statusAdmin) => {
+  const handleGetQuestions = async (quiz_id, questions_length, isAdmin) => {
     try {
       const [submitted, questions, correct] = await getQuestions(
         quiz_id,
         questions_length,
-        statusAdmin
+        isAdmin
       );
       if (questions_length === 0) {
         dispatch({
           type: 'addDbQuestions',
           questions: questions,
-          index: index
+          index: index,
         });
         if (submitted) {
           dispatch({
             type: 'addCorrect',
             quizIndex: index,
-            correct: correct
+            correct: correct,
           });
         }
       }
       // when quizzes data is ready setSelectedQuiz is used to show the quiz
-      setSelectedQuiz(index);
+      setState((prevstate) => {
+        return { ...prevstate, selectedQuiz: index };
+      });
       // showCorrct state is set according to the submitted state
-      setSubmitted(submitted);
+      setState(prevState=>{
+        return {...prevState, submitted: submitted}
+      })
     } catch (error) {
       errorHandling(error);
     }
@@ -53,7 +56,9 @@ const QuizSelect = props => {
   return (
     <QuizButton
       name={quiz}
-      onClick={() => handleGetQuestions(quiz_id, questions.length, statusAdmin)}
+      onClick={() =>
+        handleGetQuestions(quiz_id, questions.length, state.isAdmin)
+      }
     />
   );
 };

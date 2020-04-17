@@ -8,7 +8,7 @@ import Question from '../components/Question';
 import { QuizDispatch } from '../App';
 
 const Quiz = (props) => {
-  const { quiz, quizIndex, submitted, setSubmitted } = props;
+  const { quiz, quizIndex, state, setState } = props;
   const dispatch = useContext(QuizDispatch);
 
   const handleSubmit = async () => {
@@ -25,13 +25,15 @@ const Quiz = (props) => {
       quizIndex: quizIndex,
       correct: correct,
     });
-    setSubmitted(!submitted);
+    setState(prevState => {
+      return {...prevState, submitted: true}
+    })
   };
 
   return (
     <div>
       <h1>{quiz.quiz}</h1>
-      {!submitted && (
+      {!state.submitted && (
         <OutlinedButton name={'Lähetä vastaukset'} onClick={handleSubmit} />
       )}
 
@@ -43,10 +45,10 @@ const Quiz = (props) => {
             question={question}
             quizIndex={quizIndex}
             questionIndex={questionIndex}
-            submitted={submitted}
+            submitted={state.submitted}
           />
         ))}
-      {!submitted && (
+      {!state.submitted && (
         <OutlinedButton name={'Lähetä vastaukset'} onClick={handleSubmit} />
       )}
     </div>
