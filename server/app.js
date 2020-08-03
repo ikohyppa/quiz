@@ -25,9 +25,9 @@ app.use('/delete', deleteRouter);
 app.use('/insert', insertRouter);
 app.use('/update', updateRouter);
 
-const buildPath = path.join(__dirname, '/../client/build');
+const buildPath = path.join(__dirname, '../client/build');
 
-app.use('/', express.static(buildPath));
+app.use(express.static(buildPath));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
